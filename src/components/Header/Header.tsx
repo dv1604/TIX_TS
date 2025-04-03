@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { AppBar, Avatar, Box, IconButton, List, ListItem, ListItemButton, Toolbar } from '@mui/material';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AppBar, Avatar, Box, Button, Divider, IconButton, List, ListItem, ListItemButton, Toolbar } from '@mui/material';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import MenuIcon from '@mui/icons-material/Menu';
 import MobileHeader from './MobileHeader';
 import ASSESTS from '../../assests/index';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { logout } from '../../store/features/Authentication/authSlice';
 
 const Header = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const { isAuthenticated, user } = useSelector((state: RootState) => {
+        return state.auth
+    })
 
     const navitems = [
         { name: 'Home', path: '/home' },
@@ -18,6 +25,13 @@ const Header = () => {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+    }
 
     return (
         <AppBar component='nav' elevation={0} sx={{ maxWidth: '100%', padding: '8px 72px' }}>
@@ -56,10 +70,56 @@ const Header = () => {
                             </ListItem>
                         ))}
                     </List>
+                    {!isAuthenticated &&
+                        <Divider orientation='vertical'
+                        variant='middle'
+                        flexItem/>}
                     <IconButton color='inherit'>
                         <NotificationsNoneIcon />
                     </IconButton>
-                    <Avatar sx={{ background: 'linear-gradient(to right,rgba(242, 196, 111, 1),rgba(198, 148, 63, 1))' }}>A</Avatar>
+                    {/* Login and Signup Buttons */}
+                    {!isAuthenticated && (
+                        <><Button
+                            sx={{
+                                border: 'none',
+                                fontSize: '18px',
+                                color: 'grey.900',
+                                padding: 0
+                            }}
+                            onClick={() => navigate('/register')}>
+                            Register Account
+                        </Button>
+                            <Button
+                                variant='contained'
+                                sx={{
+                                    bgcolor: 'royalblue.main',
+                                    color: 'rgba(255, 190, 0, 1)',
+                                    fontSize: '18px',
+                                    padding: '2px 8px',
+                                    boxShadow:'none'
+                                }}
+                                onClick={() => navigate('/login')}>
+                                login
+                            </Button></>)}
+                    {/* Profile Icon */}
+                    {isAuthenticated && <Avatar
+                        sx={{
+                            background: 'linear-gradient(to right,rgba(242, 196, 111, 1),rgba(198, 148, 63, 1))',
+                            textTransform: 'uppercase'
+                        }}>{user?.name[0]}</Avatar>}
+
+                    {isAuthenticated && <Button
+                        variant='outlined'
+                        sx={{
+                            color: 'grey.800',
+                            fontSize: '16px',
+                            padding: '2px 8px',
+                            border:'1px solid',
+                            borderColor:'grey.500'
+                        }}
+                        onClick={handleLogout}>
+                        logout
+                    </Button>}
                 </Box>
 
                 {/* Mobile view hamburger menu */}

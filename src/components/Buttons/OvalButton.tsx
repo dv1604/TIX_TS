@@ -12,7 +12,8 @@ const OvalButton:React.FC<{
       border: '1px solid rgba(51, 61, 88, 1)',
       borderRadius: '23px',
       color: 'inherit',
-      textTransform: 'capitalize'
+      textTransform: 'capitalize',
+      
     }}>{children}</Button>
   )
 }

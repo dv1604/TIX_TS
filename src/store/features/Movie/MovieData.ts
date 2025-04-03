@@ -41,7 +41,7 @@ export const movies: Movies[] = [
                         location: "Adajan",
                         screens: [
                             { type: "Regular 2D", price: 150, slots: ["08:00", "09:30", "12:30", "15:45", "21:00"] },
-                            { type: "Gold Class 2D", price: 250, slots: ["8:00", "13:00", "16:00", "19:30"] },
+                            { type: "Gold Class 2D", price: 250, slots: ["08:00", "13:00", "16:00", "19:30"] },
                         ],
                     },
                     {

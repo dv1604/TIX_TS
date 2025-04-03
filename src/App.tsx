@@ -1,54 +1,84 @@
-import React, { useEffect } from 'react'
-import Header from './components/Header/Header'
-import Homepage from './pages/HomePage/Homepage'
-import Footer from './components/Footer'
-import { Navigate, Route, Routes, useLocation } from 'react-router'
-import MyTickets from './pages/MyTickets/index'
-import { Box } from '@mui/material'
-import News from './pages/News'
-import NewsDetail from './pages/News/sections/NewsDetail'
-import ComingSoonPage from './pages/ComingSoon'
-import SlotBooking from './pages/SlotBooking'
-import SeatBooking from './pages/SeatBooking'
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/store";
+import Layout from "./Layout/Layout";
+
+// Page Import
+import Homepage from "./pages/HomePage/Homepage";
+import MyTickets from "./pages/MyTickets";
+import News from "./pages/News";
+import NewsDetail from "./pages/News/sections/NewsDetail";
+import ComingSoonPage from "./pages/ComingSoon";
+import SlotBooking from "./pages/SlotBooking";
+import SeatBooking from "./pages/SeatBooking";
+import Payment from "./pages/Payment";
+import Login from "./pages/Auth/SignInPage";
+import SignUp from "./pages/Auth/SignUpPage";
+import EmailInput from "./pages/Auth/EmailInput";
+import PaymentConfirmation from "./pages/PaymentConfirmation";
+import Ticket from "./pages/Ticket";
+import VideoPage from "./pages/News/sections/VideoPage";
 
 const App = () => {
-
   const location = useLocation();
+  const { selectedMovie } = useSelector((state: RootState) => state.movie);
+  const { selectedTime } = useSelector((state: RootState) => state.slots);
 
-  // Scroll back at top whenever you change page
-  useEffect(()=>{
-    window.scrollTo(0,0);
-  },[location])
+  const {isAuthenticated,emailAdded} = useSelector((state:RootState)=>{
+    return state.auth
+  })
+  const {isPaymentDone,isSeatSelected,isSlotSelected} = useSelector((state:RootState)=>{
+    return state.booking
+  })
+  
+  
+
+  // Scroll to top on page change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
-    <>
-      {/* Header (Fixed on Top) */}
-      <Header />
+    <Routes>
+      <Route path="/" element={<Navigate to="/home" />} />
+      <Route
+        path="/*"
+        element={
+          <Layout>
+            <Routes>
+              <Route path="/home" element={<Homepage />} />
+              <Route path="/my-tickets/*" element={<MyTickets />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
+              <Route path="/video/:id" element={<VideoPage />} />
+              <Route path="/coming-soon" element={<ComingSoonPage />} />
+              <Route path="/slots/:id" element={<SlotBooking />} />
+              <Route
+                path="/seat"
+                element={
+                  isSlotSelected ? <SeatBooking /> : <Navigate to="/slots/:id" />
+                }
+              />
+              <Route path="/payment" element={
+                  isSeatSelected ? <Payment /> : <Navigate to="/seat" />
+                } />
+              <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
+              <Route path="/ticket" element={<Ticket />} />
+            </Routes>
+          </Layout>
+        }
+      />
+      <Route element={isAuthenticated && emailAdded && <Navigate to='/' />}>
+      <Route path="/login" element={isAuthenticated && emailAdded ? <Navigate to='/' /> :<Login />} />
+      <Route path="/register" element={isAuthenticated && emailAdded ? <Navigate to='/' /> :<SignUp />} />
+      </Route>
+      <Route
+        path="/email-input"
+        element={!emailAdded && isAuthenticated ? <EmailInput /> : <Navigate to="/" />}
+      />
+    </Routes>
+  );
+};
 
-      {/* Main Content Area (Between Header & Footer) */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          marginTop: '70px', 
-          marginBottom:'50px'
-        }}
-      >
-        <Routes>
-          <Route path='/' element={<Navigate to='/home' />} />
-          <Route path='/home' element={<Homepage />} />
-          <Route path='/my-tickets/*' element={<MyTickets />} />
-          <Route path='/news' element={<News/>} />
-          <Route path='/news/:id' element={<NewsDetail/>} />
-          <Route path='/coming-soon' element={<ComingSoonPage/>} />
-          <Route path='/slots/:id' element={<SlotBooking/>} />
-          <Route path='/seat' element={<SeatBooking/>} />
-        </Routes>
-      </Box>
-
-      {/* Footer (Fixed on Bottom) */}
-      <Footer />
-    </>
-  )
-}
-
-export default App
+export default App;

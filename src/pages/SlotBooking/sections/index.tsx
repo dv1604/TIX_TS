@@ -17,7 +17,7 @@ const Slots = () => {
             maxWidth={false}>
             <Grid container
                 columnSpacing={16}>
-                <Grid item xs={7}
+                <Grid item xs={12} md={7}
                     sx={{
                     }}>
                     <Container
@@ -44,10 +44,11 @@ const Slots = () => {
                         </Container>
                     </Container>
                 </Grid>
-                <Grid item xs={5}
+                <Grid item xs={12} md={5}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
+                        alignItems:'center',
                         gap: 6,
                         width:415
                     }}>

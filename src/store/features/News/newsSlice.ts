@@ -10,13 +10,15 @@ interface NewsState {
     selectedCategory:'Spotlight' | 'News' | 'Video';
     selectedKeyword: string | null;
     keywords: string[];
+    searchQuery: string;
 }
 
 const initialState: NewsState = {
     articles,
     selectedCategory: 'Spotlight',
     selectedKeyword: null,
-    keywords: extractkeywords(articles)
+    keywords: extractkeywords(articles),
+    searchQuery: '',
 }
 
 const newsSlice = createSlice({
@@ -28,9 +30,12 @@ const newsSlice = createSlice({
         },
         setKeyword:(state,action:PayloadAction<string|null>)=>{
             state.selectedKeyword = action.payload;
-        }
+        },
+        setSearchQuery: (state, action: PayloadAction<string>) => {
+            state.searchQuery = action.payload; 
+          },
     }
 });
 
-export const {setCategory,setKeyword} = newsSlice.actions;
+export const {setCategory,setKeyword,setSearchQuery} = newsSlice.actions;
 export default newsSlice.reducer;

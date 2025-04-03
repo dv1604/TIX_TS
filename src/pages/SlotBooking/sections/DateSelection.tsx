@@ -24,9 +24,10 @@ const DateSelection = () => {
     const dates = generateUpcomingDates();
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // sm and below
-    const isLarge = useMediaQuery(theme.breakpoints.between('md', 'lg')); // md to lg
-    const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'md')); // md to lg
+    const isRegular = useMediaQuery(theme.breakpoints.down(1280))
+    const isMobile = useMediaQuery(theme.breakpoints.down(565)); // sm and below
+    const isLarge = useMediaQuery(theme.breakpoints.down(800)); // md to lg
+    const isMedium = useMediaQuery(theme.breakpoints.down(600)); // md to lg
 
     return (
         <Container
@@ -72,7 +73,7 @@ const DateSelection = () => {
                 <Swiper
                     modules={[Navigation]}
                     loop={false}
-                    slidesPerView={isMobile ? 1: isMedium ? 2 : isLarge ? 3 :5}
+                    slidesPerView={isMobile ? 2: isMedium ? 2 : isLarge ? 3 : isRegular ? 4 : 5}
                     navigation={{ nextEl: '.next-date', prevEl: '.prev-date' }}
                     spaceBetween={15}
                     style={{ width: '80%' }}

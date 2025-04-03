@@ -8,6 +8,7 @@ export interface NewsArticle {
     image: string;
     category: 'Spotlight' | 'News' | "Video";
     keywords: string[];
+    videoUrl?: string;
 }
 
 const generateLongDescription = () => {
@@ -57,6 +58,24 @@ export const articles:NewsArticle[] = [
         category: "News",
         keywords: [],
     },
+    {
+        id: 6,
+        title: "Watch the Official Trailer of Avengers: Endgame",
+        description: generateLongDescription(),
+        image: ASSESTS.images.avengers, // Placeholder image
+        category: "Video",
+        keywords: ["Avengers", "Marvel"],
+        videoUrl: "https://youtu.be/6ZfuNTqbHE8?si=Mf-HkrSRT-RqAzuj",
+      },
+      {
+        id: 7,
+        title: "Exclusive Interview with Tom Holland on Spider-Man No Way Home",
+        description: generateLongDescription(),
+        image: ASSESTS.images.spiderman, // Placeholder image
+        category: "Video",
+        keywords: ["Spider-Man", "Tom Holland"],
+        videoUrl: "https://www.w3schools.com/html/movie.mp4", 
+      },
 ]
 
 export const extractkeywords = (articles:NewsArticle[]) => {

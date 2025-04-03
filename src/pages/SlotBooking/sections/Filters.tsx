@@ -13,6 +13,7 @@ const Filters = () => {
         return state.movie
     })
 
+    
     // studio filter handlers
     const studios = ['XXI', '2D', 'CGV', 'GOLD CLASS 2D', 'VELVET 2D', 'CINEPOLIS', 'REGULAR 2D'];
     const handleStudio = (event: SelectChangeEvent<string>) => {
@@ -35,6 +36,11 @@ const Filters = () => {
         dispatch(movieActions.setChain(value ?? selectedChain));
     }
 
+    // search handle
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+            dispatch(movieActions.setSearchTheatre(event.target.value));
+        };
+
 
     return (
         <Container
@@ -42,8 +48,8 @@ const Filters = () => {
             maxWidth={false}
             sx={{
                 display: 'flex',
-                flexDirection: 'row',
-                gap:6,
+                flexDirection: {xs:'column',md:'row'},
+                gap:{xs:3,lg:6},
                 width:'100%'
             }}>
 
@@ -51,8 +57,9 @@ const Filters = () => {
             <TextField
                 variant='outlined'
                 placeholder='Search Theatres'
+                onChange={handleSearch}
                 sx={{
-                    width: 400,
+                    width: {md:200,lg:400},
                     height: 44,
                     cursor: 'pointer',
                     '& .MuiOutlinedInput-root': {
@@ -89,7 +96,7 @@ const Filters = () => {
             maxWidth={false}
             sx={{
                 display:'flex',
-                gap:5
+                gap:{xs:2,lg:5}
 
             }}>
                 {/* StudioFilter */}

@@ -17,8 +17,14 @@ const NewsDetail = () => {
         return <h1>Article not found</h1>
     }
     return (
-        <Container sx={{
-            maxWidth: 858,
+        <Container
+        disableGutters
+        maxWidth={false}
+        sx={{
+            maxWidth: '80%',
+            display:'flex',
+            flexDirection:'column',
+            alignItems:'center'
         }}>
             <Container
                 disableGutters
@@ -58,8 +64,8 @@ const NewsDetail = () => {
                     component='img'
                     src={article.image}
                     sx={{
-                        width: 858,
-                        height: 447,
+                        maxWidth: {xs:600,sm:700,lg:858},
+                        height: {xs:300,sm:400,lg:447},
                         borderRadius: '10px',
                         objectFit: 'cover'
                     }} />
@@ -67,7 +73,7 @@ const NewsDetail = () => {
                     variant='body1'
                     sx={{
                         color: 'grey.900',
-                        width: 748,
+                        width: {lg:748},
                         whiteSpace: 'pre-line'
                     }}>
                     {article.description}
@@ -94,7 +100,7 @@ const NewsDetail = () => {
                 display:'flex',
                 flexDirection:'column',
                 alignItems:'center',
-                gap:3
+                gap:2
             }}>
                 <Typography
                     variant='h2'>

@@ -19,6 +19,11 @@ import tenet from './tenet.png';
 import yowis from './yowis.png';
 import donnie_yen from './donnie_yen.png';
 import gucci2 from './gucci2.png';
+import loginBg from './loginBg.png';
+import signUpBg from './SignUpBg.png';
+import signUpBg2 from './SignUpBg2.png';
+import movieRoll from './Movie Roll.png';
+import clapperBoard from './Clapperboard.png';
 
 const ASSESTS = {
     images:{
@@ -42,7 +47,12 @@ const ASSESTS = {
         tenet,
         yowis,
         donnie_yen,
-        gucci2
+        gucci2,
+        loginBg,
+        signUpBg,
+        signUpBg2,
+        movieRoll,
+        clapperBoard
     }
 }
 

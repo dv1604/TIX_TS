@@ -1,60 +1,189 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Box, Drawer, IconButton, List, ListItem, ListItemButton, Divider, Avatar } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  Typography,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { logout } from '../../store/features/Authentication/authSlice';
 
-interface MobileDrawerProps {
-    mobileOpen: boolean;
-    handleDrawerToggle: () => void;
-    navitems: { name: string; path: string }[];
+interface MobileHeaderProps {
+  mobileOpen: boolean;
+  handleDrawerToggle: () => void;
+  navitems: { name: string; path: string }[];
 }
 
-const MobileHeader: React.FC<MobileDrawerProps> = ({ mobileOpen, handleDrawerToggle, navitems }) => {
-    return (
-        <Drawer anchor="right" open={mobileOpen} onClose={handleDrawerToggle}>
-            <Box sx={{ width: 250, p: 2, display: "flex", flexDirection: "column", justifyContent: 'space-between', height: '100vh' }}>
-                {/* Close Button */}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                    <IconButton onClick={handleDrawerToggle}>
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
+const MobileHeader: React.FC<MobileHeaderProps> = ({
+  mobileOpen,
+  handleDrawerToggle,
+  navitems,
+}) => {
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-                {/* Navigation Items */}
-                <List>
-                    {navitems.map((item) => (
-                        <ListItem key={item.name} disablePadding sx={{ textAlign: 'center' }}>
-                            <ListItemButton>
-                                <NavLink
-                                    to={item.path}
-                                    style={({ isActive }) => ({
-                                        textDecoration: 'none',
-                                        color: isActive ? 'rgba(17, 142, 234, 1)' : 'inherit',
-                                        fontSize: '18px',
-                                        width: '100%',
-                                        textAlign: 'center'
-                                    })}
-                                    onClick={handleDrawerToggle}
-                                >
-                                    {item.name}
-                                </NavLink>
-                            </ListItemButton>
-                            <Divider />
-                        </ListItem>
-                    ))}
-                </List>
+  const handleLogout = () => {
+    dispatch(logout());
+    handleDrawerToggle(); // Close drawer after logout
+  };
 
-                {/* Icons */}
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", mb: 2 }}>
-                    <IconButton color='inherit'>
-                        <NotificationsNoneIcon />
-                    </IconButton>
-                    <Avatar sx={{ background: 'linear-gradient(to right,rgba(242, 196, 111, 1),rgba(198, 148, 63, 1))' }}>A</Avatar>
-                </Box>
-            </Box>
-        </Drawer>
-    );
+  return (
+    <Drawer
+      anchor="right"
+      open={mobileOpen}
+      onClose={handleDrawerToggle}
+      PaperProps={{
+        sx: {
+          width: 250,
+          padding: '16px',
+          position: 'fixed',
+          height: '100%',
+          right: 0, 
+          left: 'auto', 
+        },
+      }}
+    >
+      {/* Drawer Header */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6" fontWeight="bold">
+          Menu
+        </Typography>
+        <IconButton onClick={handleDrawerToggle}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Navigation Links */}
+      <List>
+        {navitems.map((item) => (
+          <ListItem key={item.name} disablePadding>
+            <ListItemButton onClick={handleDrawerToggle}>
+              <NavLink
+                to={item.path}
+                style={({ isActive }) => ({
+                  textDecoration: 'none',
+                  color: isActive ? 'rgba(17, 142, 234, 1)' : 'inherit',
+                  fontWeight: isActive ? 'bold' : 'normal',
+                  width: '100%',
+                })}
+              >
+                {item.name}
+              </NavLink>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Show Login/Register if NOT authenticated */}
+      {!isAuthenticated ? (
+        <Box display="flex" flexDirection="column" gap={1} alignItems="center">
+          <Button
+            sx={{
+              width: '100%',
+              fontSize: '16px',
+              color: 'grey.900',
+              textTransform: 'none',
+            }}
+            onClick={() => {
+              navigate('/register');
+              handleDrawerToggle();
+            }}
+          >
+            Register Account
+          </Button>
+
+          <Button
+            variant="contained"
+            sx={{
+              width: '100%',
+              bgcolor: 'royalblue.main',
+              color: 'rgba(255, 190, 0, 1)',
+              fontSize: '16px',
+              boxShadow: 'none',
+              textTransform: 'none',
+            }}
+            onClick={() => {
+              navigate('/login');
+              handleDrawerToggle();
+            }}
+          >
+            Login
+          </Button>
+        </Box>
+      ) : (
+        // Show Profile + Logout if Authenticated
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 16,
+            left: 16,
+            right: 16,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: 'calc(100% - 32px)',
+          }}
+        >
+          {/* Avatar on Bottom-Left */}
+          <Avatar
+            sx={{
+              width: 40,
+              height: 40,
+              background: 'linear-gradient(to right, rgba(242, 196, 111, 1), rgba(198, 148, 63, 1))',
+              textTransform: 'uppercase',
+              fontSize: '16px',
+            }}
+          >
+            {user?.name[0]}
+          </Avatar>
+
+          {/* User Name on Bottom-Right */}
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            sx={{ fontSize: '16px', textAlign: 'right', color: 'grey.900' ,
+                textTransform:'capitalize'
+            }}
+          >
+            {user?.name}
+          </Typography>
+        </Box>
+      )}
+
+      {/* Logout Button (Remains in place) */}
+      {isAuthenticated && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <Button
+            variant="outlined"
+            sx={{
+              width: '100%',
+              color: 'grey.800',
+              borderColor: 'grey.500',
+              fontSize: '16px',
+              textTransform: 'none',
+            }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Box>
+      )}
+    </Drawer>
+  );
 };
 
 export default MobileHeader;

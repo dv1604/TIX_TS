@@ -10,7 +10,7 @@ const News = () => {
     <Container className='news-section' disableGutters 
     maxWidth={false} 
     sx={{
-        padding:'20px 72px 20px 72px'
+        padding:{xs:'0 30px' ,lg:'20px 72px 20px 72px'}
     }}>
         
         <Header/>

@@ -1,164 +1,215 @@
-import { Button, Grid } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import { Box, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { slotsActions } from "../../../store/features/Slots/SlotsSlice";
+import useDragScroll from "../../../hooks/useDragScroll"; // Import custom hook
 
-type SeatStatus = 'Sold' | 'Available' | 'Selected'
+type Seat = {
+  id: string;
+  status: "available" | "sold" | "selected";
+};
 
-interface Seat {
-    id: string,
-    status: SeatStatus
-}
+const rows = 8;
+const cols = 20;
+const soldOutSeats = new Set([
+  "A9", "A10", "B3", "B4", "B8", "B9", "B10", "C4", "C5", "C8", "C9", "C10",
+  "D7", "D8", "D9", "D10", "B11", "B12", "B13", "B14", "C11", "C12", "C13",
+  "C14", "C15", "D11", "D12", "D13", "D14", "E11", "E12", "E13"
+]);
 
-// First section of seats
-const rows = [
-    ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10'],
-    ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10'],
-    ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10'],
-    ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
-    ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'E10'],
-    ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'],
-    ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10'],
-    ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10'],
-]
+// Generate Seats
+const generateSeats = (): Seat[][] => {
+  return Array.from({ length: rows }, (_, rowIndex) =>
+    Array.from({ length: cols }, (_, colIndex) => {
+      const seatId = `${String.fromCharCode(65 + rowIndex)}${colIndex + 1}`;
+      return {
+        id: seatId,
+        status: soldOutSeats.has(seatId) ? "sold" : "available",
+      };
+    })
+  );
+};
 
-// Second section of seats
-const secondRows = [
-    ['A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A20'],
-    ['B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'B17', 'B18', 'B19', 'B20'],
-    ['C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20'],
-    ['D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D20'],
-    ['E11', 'E12', 'E13', 'E14', 'E15', 'E16', 'E17', 'E18', 'E19', 'E20'],
-    ['F11', 'F12', 'F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20'],
-    ['G11', 'G12', 'G13', 'G14', 'G15', 'G16', 'G17', 'G18', 'G19', 'G20'],
-    ['H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20'],
-]
+const SeatGrid: React.FC = () => {
+  const [seats, setSeats] = useState<Seat[][]>(generateSeats());
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  const { containerRef, handleMouseDown, isDragging } = useDragScroll();
 
-const SeatGrid = () => {
+  // Handle Seat Click
+  const handleSeatClick = (seatId: string) => {
+    setSelectedSeats((prevSelectedSeats) => {
+      const isSelected = prevSelectedSeats.includes(seatId);
+      let updatedSelection = [...prevSelectedSeats];
 
-    const [seats, setSeats] = useState<Seat[][]>(
-        rows.map(row => (
-            row.map(id => ({
-                id,
-                status: Math.random() > 0.8 ? 'Sold' : 'Available'
-            }))
-        ))
-    );
+      if (isSelected) {
+        // Deselect seat
+        updatedSelection = prevSelectedSeats.filter((s) => s !== seatId);
+        dispatch(slotsActions.decreaseTotalAmount());
+      } else {
+        if (prevSelectedSeats.length >= 5) {
+          // Remove first seat and add new one
+          const removedSeat = prevSelectedSeats[0];
+          updatedSelection = [...prevSelectedSeats.slice(1), seatId];
 
-    const [secondSeats, setSecondSeats] = useState<Seat[][]>(
-        secondRows.map(row => (
-            row.map(id => ({
-                id,
-                status: Math.random() > 0.8 ? 'Sold' : 'Available'
-            }))
-        ))
-    );
+          dispatch(slotsActions.decreaseTotalAmount()); // Remove price of old seat
+          dispatch(slotsActions.increaseTotalAmount()); // Add price of new seat
 
-    const handleSelectSeat = (rowIndex: number, seatIndex: number, section: 'first' | 'second') => {
-        if (section === 'first') {
-            setSeats(prevSeats => (
-                prevSeats.map((row, rIndx) => (
-                    row.map((seat, seatIndx) => (
-                        rIndx === rowIndex && seatIndx === seatIndex
-                            ? { ...seat, status: seat.status === 'Selected' ? 'Available' : 'Selected' }
-                            : seat
-                    ))
-                ))
-            ));
+          // Update seats to reflect removal
+          setSeats((prevSeats) =>
+            prevSeats.map((row) =>
+              row.map((seat) => {
+                if (seat.id === removedSeat) {
+                  return { ...seat, status: "available" }; // Old seat becomes available
+                }
+                if (seat.id === seatId) {
+                  return { ...seat, status: "selected" }; // New seat gets selected
+                }
+                return seat;
+              })
+            )
+          );
         } else {
-            setSecondSeats(prevSeats => (
-                prevSeats.map((row, rIndx) => (
-                    row.map((seat, seatIndx) => (
-                        rIndx === rowIndex && seatIndx === seatIndex
-                            ? { ...seat, status: seat.status === 'Selected' ? 'Available' : 'Selected' }
-                            : seat
-                    ))
-                ))
-            ));
+          // Directly add new seat if < 5 selected
+          updatedSelection = [...prevSelectedSeats, seatId];
+          dispatch(slotsActions.increaseTotalAmount());
         }
-    };
+      }
 
-    return (
-        <Grid container justifyContent="center" sx={{ mt: 5, width: '100%', display: 'flex', flexDirection: 'row', gap: 6 }}>
-            {/* First Section (Left) */}
-            <Grid item>
-                <Grid container direction="column" spacing={0.5}>
-                    {seats.map((row, rowIndex) => (
-                        <Grid container key={rowIndex} justifyContent="center">
-                            {row.map((seat, seatIndex) => (
-                                <Grid item key={seatIndex} sx={{ margin: '4px' }}>
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            width: 45,  // Force exact width
-                                            height: 45, // Force exact height
-                                            minWidth: 'unset', // Remove MUI default width (fixes extra width issue)
-                                            borderRadius: '6px',
-                                            boxShadow: 'none',
-                                            border: '1px solid',
-                                            borderColor: 'grey.300',
-                                            bgcolor: seat.status === 'Sold' ? 'royalblue.main' :
-                                                seat.status === 'Selected' ? 'links.main' : 'primary.main',
-                                            color: seat.status === 'Available' ? 'grey.900' : 'primary.main',
-                                            fontWeight: 700,
-                                            '&:hover': {
-                                                bgcolor: seat.status === 'Available' ? 'royalblue.main' :
-                                                    seat.status === 'Selected' ? 'links.main' : 'primary.main',
-                                                color: 'white'
-                                            }
-                                        }}
-                                        onClick={() => seat.status === 'Available' && handleSelectSeat(rowIndex, seatIndex, 'first')}
-                                    >
-                                        {seat.id}
-                                    </Button>
+      dispatch(slotsActions.setSelectedSeats(updatedSelection)); // Update Redux immediately
 
-                                </Grid>
-                            ))}
-                        </Grid>
-                    ))}
-                </Grid>
-            </Grid>
+      // Update seat colors correctly
+      setSeats((prevSeats) =>
+        prevSeats.map((row) =>
+          row.map((seat) => ({
+            ...seat,
+            status: updatedSelection.includes(seat.id)
+              ? "selected"
+              : soldOutSeats.has(seat.id)
+                ? "sold"
+                : "available",
+          }))
+        )
+      );
 
-            {/* Second Section (Right) */}
-            <Grid item>
-                <Grid container direction="column" spacing={0.5}>
-                    {secondSeats.map((row, rowIndex) => (
-                        <Grid container key={rowIndex} justifyContent="center">
-                            {row.map((seat, seatIndex) => (
-                                <Grid item key={seatIndex} sx={{ margin: '4px' }}>
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            width: 45,  // Force exact width
-                                            height: 45, // Force exact height
-                                            minWidth: 'unset', // Remove MUI default width (fixes extra width issue)
-                                            borderRadius: '6px',
-                                            boxShadow: 'none',
-                                            border: '1px solid',
-                                            borderColor: 'grey.300',
-                                            bgcolor: seat.status === 'Sold' ? 'royalblue.main' :
-                                                seat.status === 'Selected' ? 'links.main' : 'primary.main',
-                                            color: seat.status === 'Available' ? 'grey.900' : 'primary.main',
-                                            fontWeight: 700,
-                                            '&:hover': {
-                                                bgcolor: seat.status === 'Available' ? 'royalblue.main' :
-                                                    seat.status === 'Selected' ? 'links.main' : 'primary.main',
-                                                color: 'white'
-                                            }
-                                        }}
-                                        onClick={() => seat.status === 'Available' && handleSelectSeat(rowIndex, seatIndex, 'second')}
-                                    >
-                                        {seat.id}
-                                    </Button>
+      return updatedSelection;
+    });
+  };
 
-                                </Grid>
-                            ))}
-                        </Grid>
-                    ))}
-                </Grid>
-            </Grid>
-        </Grid>
+  return (
+    <Box
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      sx={{
+        display: "flex",
+        width: "110%",
+        cursor: isDragging ? "grabbing" : "grab",
+        justifyContent: { md: "flex-start" },
+        mt: 4,
+        overflowX: "auto",
+        scrollBehavior: "smooth",
+        userSelect: "none",
+        "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar
+        msOverflowStyle: "none",
+        scrollbarWidth: "none",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "15px",
+          width: { xs: "50%", lg: "100%" },
+        }}
+      >
+        {seats.map((row, rowIndex) => (
+          <Box
+            key={rowIndex}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              gap: "6rem",
+            }}
+          >
+            <Box sx={{ display: "flex", gap: "7px" }}>
+              {row.slice(0, 10).map((seat) => (
+                <Button
+                  key={seat.id}
+                  variant="contained"
+                  sx={{
+                    minWidth: 45,
+                    width: 45,
+                    height: 45,
+                    boxShadow: "none",
+                    backgroundColor:
+                      seat.status === "sold"
+                        ? "royalblue.main"
+                        : seat.status === "selected"
+                          ? "links.main"
+                          : "primary.main",
+                    color: seat.status === "available" ? "grey.800" : "primary.main",
+                    fontWeight: 700,
+                    border: "1px solid #ccc",
+                    cursor: seat.status === "sold" ? "not-allowed" : "pointer",
+                    "&:hover": {
+                      backgroundColor:
+                        seat.status === "selected"
+                          ? "links.main"
+                          : "royalblue.main",
+                      color: "#fff",
+                    },
+                  }}
+                  onClick={() => {
+                    if (seat.status !== "sold") handleSeatClick(seat.id);
+                  }}
+                >
+                  {seat.id}
+                </Button>
+              ))}
+            </Box>
 
-
-    );
+            <Box sx={{ display: "flex", gap: "7px" }}>
+              {row.slice(10, 20).map((seat) => (
+                <Button
+                  key={seat.id}
+                  variant="contained"
+                  sx={{
+                    minWidth: 45,
+                    width: 45,
+                    height: 45,
+                    boxShadow: "none",
+                    backgroundColor:
+                      seat.status === "sold"
+                        ? "royalblue.main"
+                        : seat.status === "selected"
+                          ? "links.main"
+                          : "primary.main",
+                    color: seat.status === "available" ? "grey.800" : "primary.main",
+                    fontWeight: 700,
+                    border: "1px solid #ccc",
+                    cursor: seat.status === "sold" ? "not-allowed" : "pointer",
+                    "&:hover": {
+                      backgroundColor:
+                        seat.status === "selected"
+                          ? "links.main"
+                          : "royalblue.main",
+                      color: "#fff",
+                    },
+                  }}
+                  onClick={() => {
+                    if (seat.status !== "sold") handleSeatClick(seat.id);
+                  }}
+                >
+                  {seat.id}
+                </Button>
+              ))}
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
 };
 
 export default SeatGrid;

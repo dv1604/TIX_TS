@@ -1,12 +1,14 @@
 import { Stars } from "@mui/icons-material";
 import { Box, Container, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { slotsActions } from "../../../store/features/Slots/SlotsSlice";
+import {filteredTheatres } from "../../../store/features/Movie/MovieSelectors";
 
 interface ShowDetails {
   movieName: string;
+  movieId: number;
   theatreName: string;
   city: string;
   slots: string[];
@@ -20,10 +22,13 @@ const AvailableSlots = () => {
   const dispatch = useDispatch();
   const { selectedMovie, selectedCity } = useSelector((state: RootState) => state.movie);
 
-  // Ensure we get city data safely
-  const cityData = selectedMovie.city.find((city) => city.name === selectedCity);
+  // Initialize state before any early returns
+  const [selectedSlot, setSelectedSlot] = useState<{ [key: string]: string }>({});
 
-  if (!cityData) {
+  // Find city data safely
+  const theatres = useSelector(filteredTheatres);
+
+  if (theatres.length === 0) {
     return (
       <Typography variant="h6" color="error">
         No theatres available for {selectedCity}.
@@ -43,9 +48,16 @@ const AvailableSlots = () => {
   };
 
   const sendSelectedShow = (obj: ShowDetails) => {
+    const uniqueKey = `${obj.theatreName}-${obj.theatreType}`;
+
+    setSelectedSlot(() => ({
+      [uniqueKey]: obj.selectedTime,
+    }));
+
     dispatch(
       slotsActions.setSelectedShow({
         movieName: obj.movieName,
+        movieId: obj.movieId,
         theatreName: obj.theatreName,
         city: obj.city,
         slots: obj.slots,
@@ -57,9 +69,11 @@ const AvailableSlots = () => {
     );
   };
 
+  console.log(theatres)
+
   return (
     <>
-      {cityData.theatres.map((theatre, theatreIndex) => (
+      {theatres.map((theatre, theatreIndex) => (
         <Container
           key={theatreIndex}
           disableGutters
@@ -159,8 +173,9 @@ const AvailableSlots = () => {
                       onClick={() =>
                         sendSelectedShow({
                           movieName: selectedMovie.name,
+                          movieId: selectedMovie.id,
                           theatreName: theatre.name,
-                          city: cityData.name,
+                          city: selectedCity as string,
                           theatreType: screen.type,
                           slots: screen.slots,
                           selectedTime: slot,
@@ -177,6 +192,14 @@ const AvailableSlots = () => {
                         padding: "12px 20px",
                         border: "1px solid",
                         borderColor: "grey.400",
+                        backgroundColor:
+                          selectedSlot?.[`${theatre.name}-${screen.type}`] === slot
+                            ? theme.palette.royalblue.main
+                            : "transparent",
+                        color:
+                          selectedSlot?.[`${theatre.name}-${screen.type}`] === slot
+                            ? theme.palette.primary.main
+                            : "secondary.main",
                         cursor: "pointer",
                         "&:hover": {
                           bgcolor: "rgba(26, 44, 80, 1)",

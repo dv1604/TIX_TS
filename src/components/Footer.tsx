@@ -22,45 +22,68 @@ const Footer = () => {
             </Grid>
 
             {/* Link Column */}
-            <Grid item xs={12} sm={6} lg={5} sx={{display:'flex',alignItems:'flex-start',justifyContent:'center'}}>
-                <Grid container  alignItems='flex-start'>
-                    <Grid item xs={4} >
-                        <Stack sx={{color:'secondary.main'}} spacing={1.5}>
-                            <Typography  sx={{color:'inherit'}}variant='h4'>Comapany</Typography>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Contact Us</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>About</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Partner</Link>
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Stack sx={{color:'secondary.main'}} spacing={1.5}>
-                            <Typography sx={{color:'inherit'}}variant='h4'>About</Typography>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>TIX ID News</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Cinema</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>My Tickets</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Payment</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Installments</Link>
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Stack sx={{color:'secondary.main'}} spacing={1.5} >
-                            <Typography sx={{color:'inherit'}}variant='h4'>Support</Typography >
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Help Center</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Privacy Policy</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>FAQ</Link>
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Terms and Conditions</Link >
-                            <Link  sx={{color:'inherit',cursor:'pointer'}}>Covid-19 Updates</Link>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </Grid>
+            <Grid
+    item
+    xs={12}
+    md={6}
+    lg={5}
+    sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+    }}
+>
+    {/* Added spacing to the Grid to create gaps */}
+    <Grid
+        container
+        columnSpacing={{ xs: 3, sm: 6, lg: 3 }}
+        alignItems="flex-start"
+    >
+        <Grid item xs={4}>
+            <Stack sx={{ color: "secondary.main" }} spacing={1.5}>
+                <Typography sx={{ color: "inherit" }} variant="h4">
+                    Company
+                </Typography>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Contact Us</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>About</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Partner</Link>
+            </Stack>
+        </Grid>
+
+        <Grid item xs={4}>
+            <Stack sx={{ color: "secondary.main" }} spacing={1.5}>
+                <Typography sx={{ color: "inherit" }} variant="h4">
+                    About
+                </Typography>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>TIX ID News</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Cinema</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>My Tickets</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Payment</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Installments</Link>
+            </Stack>
+        </Grid>
+
+        <Grid item xs={4}>
+            <Stack sx={{ color: "secondary.main" }} spacing={1.5}>
+                <Typography sx={{ color: "inherit" }} variant="h4">
+                    Support
+                </Typography>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Help Center</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Privacy Policy</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>FAQ</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Terms and Conditions</Link>
+                <Link sx={{ color: "inherit", cursor: "pointer" }}>Covid-19 Updates</Link>
+            </Stack>
+        </Grid>
+    </Grid>
+</Grid>
 
             {/* Download Column */}
-            <Grid item xs={12} sm={6} lg={4}  sx={{display:'flex',justifyContent:'center'}}>
+            <Grid item xs={12} md={6} lg={4}  sx={{display:'flex',justifyContent:'center'}}>
                 <Box sx={{display:'flex',flexDirection:'column',justifyContent:'flex-start',alignItems:'flex-start',gap:4}}>
                     <Box sx={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:2}}>
                         <Typography variant='h4'>Follow Social Media</Typography>
-                        <Stack direction='row' spacing={1.5}>
+                        <Stack direction='row' spacing={3}>
                             <Icon sx={{color:'secondary.main'}}><InstagramIcon/></Icon>
                             <Icon sx={{color:'secondary.main'}}><TwitterIcon/></Icon>
                             <Icon sx={{color:'secondary.main'}}><FacebookIcon/></Icon>

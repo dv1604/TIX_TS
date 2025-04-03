@@ -15,8 +15,10 @@ const MovieDetails = () => {
     maxWidth={false}
     sx={{
         display:'flex',
-        flexDirection:'column',
-        alignItems:'flex-start',
+        flexDirection:{xs:'row',md:'column'},
+        alignItems:{xs:'center',md:'flex-start'},
+        justifyContent:{xs:'space-between',md:'flex-start'},
+        flexWrap:'wrap',
         gap:4,
         mt:10
     }}>
@@ -24,8 +26,8 @@ const MovieDetails = () => {
         component='img'
         src={movie.image}
         sx={{
-            width:413,
-            height:364,
+            width:{xs:410,md:320,lg:410},
+            height:{xs:250,md:300,lg:364},
             borderRadius:'10px',
             objectFit:'cover'
         }}/>

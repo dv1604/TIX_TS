@@ -58,21 +58,21 @@ const Selection = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1,
-                                fontSize: 20,
+                                fontSize: {xs:18,md:20},
                                 textTransform: 'uppercase',
                                 mr: 5,
                                 color: 'inherit',
                             }}
                         >
-                            <AccessTime sx={{ fontSize: '32px' }} />
+                            <AccessTime sx={{xs:'20px',md:'32px'}} />
                             {selectedTime}
                         </Typography>
                     )}
                     IconComponent={(props) =>
                         open ? (
-                            <KeyboardArrowUp {...props} sx={{ fontSize: 32 }} />
+                            <KeyboardArrowUp {...props} sx={{xs:'20px',md:'32px'}} />
                         ) : (
-                            <KeyboardArrowDown {...props} sx={{ fontSize: 32 }} />
+                            <KeyboardArrowDown {...props} sx={{xs:'20px',md:'32px'}} />
                         )
                     }
                     sx={{
@@ -115,15 +115,15 @@ const Selection = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1,
-                                fontSize: 20,
+                                fontSize: {xs:18,md:20},
                                 textTransform: 'uppercase',
                                 mr: 5,
                                 color: 'inherit',
                             }}
                         >
-                            <AccessTime sx={{ fontSize: '32px' }} />
+                            <AccessTime sx={{ fontSize: {xs:'20px',md:'32px'} }} />
                             {selectedTime}
-                            <KeyboardArrowUp sx={{ fontSize: '32px' }} />
+                            <KeyboardArrowUp sx={{ fontSize: {xs:'20px',md:'32px'} }} />
                         </Typography>
                     </MenuItem>
 
@@ -135,10 +135,11 @@ const Selection = () => {
                                     <MenuItem
                                         sx={{
                                             borderRadius: '4px',
+                                            fontSize:{xs:'14px',md:''},
                                             border: '1px solid',
                                             borderColor: 'grey.400',
                                             textAlign: 'center',
-                                            width: '100%',
+                                            width: '90%',
                                             display: 'block',
                                             '&:hover': {
                                                 bgcolor: 'royalblue.main',
@@ -165,7 +166,7 @@ const Selection = () => {
                     gap: 3.5,
                     alignItems: 'center',
                     width: 'fit-content',
-                    margin:0
+                    margin: 0
                 }}>
 
                 {seatStatus.map((seat, index) => (
@@ -184,16 +185,16 @@ const Selection = () => {
                             disableGutters
                             maxWidth={false}
                             sx={{
-                                width: '20px',
-                                height: '20px',
+                                width: {xs:'13px',md:'20px'},
+                                height: {xs:'13px',md:'20px'},
                                 bgcolor: seat.color,
-                                border:'1px solid',
-                                borderColor:'grey.400'
+                                border: '1px solid',
+                                borderColor: 'grey.400'
                             }}
                         />
                         <Typography
                             sx={{
-                                fontSize: 20,
+                                fontSize: {xs:13,md:20},
                                 color: 'inherit',
                             }}
                         >

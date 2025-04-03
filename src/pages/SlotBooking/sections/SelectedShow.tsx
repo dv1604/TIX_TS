@@ -1,21 +1,20 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { useNavigate } from 'react-router'
+import { selectSlot } from '../../../store/features/Booking/bookingSlice'
 
 const SelectedShow = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const {selectedMovie} = useSelector((state: RootState) => state.movie)
     const {
         movieName,
+        movieId,
         theatreName,
-        city,
-        slots,
         theatreType,
         selectedTime,
-        ticketPrice,
-        totalAmount
     } = useSelector((state: RootState) => state.slots);
 
     const today = new Date();
@@ -25,7 +24,12 @@ const SelectedShow = () => {
     const year = today.getFullYear();
 
     const isMovieChanged = selectedMovie.name === movieName;
-    console.log(selectedMovie.name, movieName, isMovieChanged);
+    
+    const handleSubmit = () => {
+        dispatch(selectSlot());
+        navigate('/seat')
+    }
+
     return (
         <Container
             disableGutters
@@ -100,7 +104,7 @@ const SelectedShow = () => {
                     borderRadius: '10px',
                     padding: '6px 6px',
                 }}
-                onClick={() => navigate('/seat')}
+                onClick={(handleSubmit)}
             >
                 Buy Now
             </Button>

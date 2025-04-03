@@ -4,7 +4,7 @@ import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCategory, selectKeywords } from '../../../store/features/News/newsLogic';
 import OvalButton from '../../../components/Buttons/OvalButton';
-import { setCategory, setKeyword } from '../../../store/features/News/newsSlice';
+import { setCategory, setKeyword, setSearchQuery } from '../../../store/features/News/newsSlice';
 
 const Header = () => {
     const selectedCategory = useSelector(selectCategory);
@@ -14,10 +14,14 @@ const Header = () => {
     const [isFirstLoad, setIsFirstLoad] = useState(true);
 
     const handleChange = (event: SelectChangeEvent<string>) => {
-        const value = event.target.value as  "Spotlight" | "News" | "Video"; // Type assertion
+        const value = event.target.value as "Spotlight" | "News" | "Video"; // Type assertion
         dispatch(setCategory(value));
         setIsFirstLoad(false)
-      };
+    };
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setSearchQuery(event.target.value));
+    };
 
     return (
         <Container disableGutters
@@ -26,7 +30,7 @@ const Header = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
-                gap:'30px'
+                gap: '30px'
 
             }}>
             <Typography variant='h2'>TIX ID News</Typography>
@@ -41,8 +45,9 @@ const Header = () => {
                 <TextField
                     variant='outlined'
                     placeholder='Search Post'
+                    onChange={handleSearch}
                     sx={{
-                        width: 576,
+                        width: { xs: 400, sm: 576 },
                         height: 48,
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
@@ -73,7 +78,7 @@ const Header = () => {
                         onChange={handleChange}
                         displayEmpty
                         renderValue={(selected) => isFirstLoad ? "Sort" : selected}
-                        IconComponent={ArrowDropDown} 
+                        IconComponent={ArrowDropDown}
                         sx={{
                             boxShadow: "none",
                             width: 150,
@@ -97,14 +102,15 @@ const Header = () => {
                 </FormControl>
             </Box>
             <Box sx={{
-                display:'flex',
-                gap:2
+                display: 'flex',
+                flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                gap: 2
             }}>
                 {/* all available keywords */}
-                {keywords.map((keyword,index) => (
-                    <OvalButton 
-                    key={index}
-                    onClick={(() => dispatch(setKeyword(keyword)))}
+                {keywords.map((keyword, index) => (
+                    <OvalButton
+                        key={index}
+                        onClick={(() => dispatch(setKeyword(keyword)))}
                     >
                         {keyword}
                     </OvalButton>

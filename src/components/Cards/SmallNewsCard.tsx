@@ -28,7 +28,9 @@ const SmallNewsCard : React.FC<{
       <Box
         component='img'
         src={news.image}
-        sx={{ width: { xs: 200, sm: 300, lg: 368, xl: 419 }, objectFit: 'cover', height: { lg: 237 }, borderRadius: '10px', alignSelf: { xs: 'center', lg: 'flex-start' } }}
+        sx={{ width: { xs: 200, sm: 300, lg: 360, xl: 419 }, objectFit: 'cover', 
+        aspectRatio: "16/9",
+        height: { lg: 237 }, borderRadius: '10px', alignSelf: { xs: 'center', lg: 'flex-start' } }}
       />
 
       {/* News Detail Box */}
